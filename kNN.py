@@ -34,3 +34,30 @@ def classify0(inX,dataSet,labels,k):
     print("\nsortedClassCount :\n",sortedClassCount)
     return sortedClassCount[0][0]
 
+def file2matrix(filename):
+    rf = open(filename)
+    arrayOLines = rf.readlines()        
+    numberOfLines = len(arrayOLines)            #得到文件行数 
+    returnMat = zeros((numberOfLines,3))
+    classLabelVector = []
+    index = 0
+    for line in arrayOLines:
+        line = line.strip()                     #截取掉所有的回车字符
+        listFormLine = line.split('\t')         #用字符'\t'分割元素列表
+        returnMat[index,:] = listFormLine[0:3]
+        classLabelVector.append(int(listFormLine[-1]))  #-1表示最后一个元素
+        index+=1
+    return returnMat,classLabelVector 
+
+
+# newValue = (oldValue-min)/(max-min) (归一化 0 - 1)
+def autoNorm(dataSet):
+    """自动将数字特征值转化到0到1之间"""
+    minVals = dataSet.min(0)        #np.min(0)每列中的最小值 np.min(1)每行中的最小值
+    maxVals = dataSet.max(0)
+    ranges = maxVals - minVals
+    normDataSet = zeros(shape(dataSet))
+    m = dataSet.shape[0]            # dataSet.shape[0] 列数,dataSet.shape[1] 行数
+    normDataSet = dataSet - tile(minVals,(m,1))
+    normDataSet = normDataSet/tile(ranges,(m,1))
+    return normDataSet,ranges,minVals
