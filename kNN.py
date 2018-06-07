@@ -1,5 +1,7 @@
 from numpy import * 
+import os as os
 import operator
+
 
 def createDataSet():
     group = array([  [1.0,1.1],[1.0,1.0],[0,0],[0,0.1]  ])
@@ -92,6 +94,7 @@ def classifyPerson():
 
 #手写数字识别
 def img2vector(filename):
+    #print("img2vector open[ %s ] \n"%(filename));
     returnVect = zeros((1,1024))
     fr = open(filename)
     for i in range(32):
@@ -103,7 +106,7 @@ def img2vector(filename):
 def handwritingClassTest(digitsPath):
     """手写数字识别测试"""
     hwLabels = []
-    trainingFileList = listdir(digitsPath+'/trainingDigits')
+    trainingFileList = os.listdir(digitsPath+'/trainingDigits')
     m = len(trainingFileList)
     trainingMat = zeros((m,1024))
     for i in range(m):                        #解析分类数字
@@ -112,7 +115,7 @@ def handwritingClassTest(digitsPath):
         classNumStr = int(fileStr.split('_')[0]) 
         hwLabels.append(classNumStr)
         trainingMat[i,:] = img2vector(digitsPath+'/trainingDigits/%s'%(fileNameStr))
-    testFileList = listdir(digitsPath+'/testDigits')
+    testFileList = os.listdir(digitsPath+'/testDigits')
     errorCount = 0.0
     mTest = len(testFileList)
     for i in range(mTest):
@@ -126,3 +129,9 @@ def handwritingClassTest(digitsPath):
             errorCount += 1.0
     print("\nthe total number of error is:%d \n"%(errorCount))
     print("\nthe total error rate is: %f\n"%(errorCount/float(mTest)))
+"""
+实际使用这个算法时，算法的执行效率并不高。因为算法需要为每个测试向量做2000次距离
+计算，每个距离计算包括了1024个维度浮点运算，总计要执行900次，此外，我们还需要为测试
+向量准备2MB的存储空间。是否存在一种算法减少存储空间和计算时间的开销呢？ k决策树就是
+k-近邻算法的优化版，可以节省大量的计算开销
+"""
