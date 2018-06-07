@@ -99,3 +99,30 @@ def img2vector(filename):
         for j in range(32):
             returnVect[0,32*i+j] = int(lineStr[j])
     return returnVect
+
+def handwritingClassTest(digitsPath):
+    """手写数字识别测试"""
+    hwLabels = []
+    trainingFileList = listdir(digitsPath+'/trainingDigits')
+    m = len(trainingFileList)
+    trainingMat = zeros((m,1024))
+    for i in range(m):                        #解析分类数字
+        fileNameStr = trainingFileList[i]
+        fileStr = fileNameStr.split('.')[0]     #'.'号分割,取第一段 (1_3.txt)
+        classNumStr = int(fileStr.split('_')[0]) 
+        hwLabels.append(classNumStr)
+        trainingMat[i,:] = img2vector(digitsPath+'/trainingDigits/%s'%(fileNameStr))
+    testFileList = listdir(digitsPath+'/testDigits')
+    errorCount = 0.0
+    mTest = len(testFileList)
+    for i in range(mTest):
+        fileNameStr = testFileList[i]
+        fileStr = fileNameStr.split('.')[0]     #'.'号分割,取第一段 (1_3.txt)
+        classNumStr = int(fileStr.split('_')[0]) 
+        vectorUnderTest = img2vector(digitsPath+'/testDigits/%s'%(fileNameStr))
+        classifierResult = classify0(vectorUnderTest,trainingMat,hwLabels,3)
+        print ("the classifier came back with : %d,the real answer is : %d"%(classifierResult,classNumStr))
+        if(classifierResult != classNumStr):
+            errorCount += 1.0
+    print("\nthe total number of error is:%d \n"%(errorCount))
+    print("\nthe total error rate is: %f\n"%(errorCount/float(mTest)))
