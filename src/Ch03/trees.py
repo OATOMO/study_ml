@@ -93,7 +93,6 @@ def createTree(dataSet,labels):
 	return myTree
 
 
-
 if __name__ == '__main__':
     print("trees \n")
     myDat,labels=createDataSet()
