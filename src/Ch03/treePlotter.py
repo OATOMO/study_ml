@@ -61,6 +61,22 @@ def retrieveTree(i):
 												   1:'no'}}}}]	
 	return listOfTrees[i]											   
 
+def plotMidText(cntrPt,parentPt,txtString):
+	"""在父子节点之间填充文本信息 """
+	xMid = (parentPt[0]-cntrPt[0])/2.0 + cntrPt[0]
+	yMid = (parentPt[1]-cntrPt[1])/2.0 + cntrPt[1]
+	createPlot.axl.text(xMid,ymid,txtString)
+
+def plotTree(myTree,parentPt,nodeTxt):
+	#计算宽与高
+	numLeafs = getNumLeafs(myTree)
+	depth = getTreeDepth(myTree)
+	firstStr = myTree.keys()[0]
+	cntrPt = (plotTree.xOff + (1.0+float(numLeafs))/2.0/plotTree.totalW,plotTree.yOff )
+	plotMidText(cntrPt,parentPt,nodeTxt)
+
+
+
 if __name__ == '__main__':
 	#createPlot();
 	#print (getNumLeafs({'filppers': {0: 'no', 1: 'yes'}}))
