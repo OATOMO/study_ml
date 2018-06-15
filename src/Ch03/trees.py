@@ -93,6 +93,30 @@ def createTree(dataSet,labels):
 	return myTree
 
 
+def classify(inputTree,featLabels,testVec):
+	"""使用决策树的分类函数"""
+	firstStr = list(inputTree.keys())[0]
+	secondDict = inputTree[firstStr]
+	featIndex = featLabels.index(firstStr) 		#将标签字符串转换为索引
+	for key in secondDict.keys():
+		if testVec[featIndex] == key:
+			if type(secondDict[key]).__name__ == 'dict':
+				classLabel = classify(secondDict[key],featLabels,testVec)
+			else: classLabel = secondDict[key]
+	return classLabel
+
+def storeTree(inputTree,filename):
+	"""使用pickle模块存储决策树"""
+	import pickle
+	fw = open(filename,'wb+')
+	pickle.dump(inputTree,fw)
+	fw.close()
+
+def grabTree(filename):
+	import pickle
+	fr = open(filename,"rb")
+	return pickle.load(fr)
+
 if __name__ == '__main__':
     print("trees \n")
     myDat,labels=createDataSet()
@@ -101,4 +125,6 @@ if __name__ == '__main__':
     #print (splitDataSet(myDat,0,1))
     #print (splitDataSet(myDat,0,0))
     #print (chooseBestFeatureToSplit(myDat))
-    print( createTree(myDat,labels))
+    # print( createTree(myDat,labels))
+    storeTree(createTree(myDat,labels),'/opt/git_Atom/study_ml/src/Ch03/classTree.t')
+    print ( grabTree('/opt/git_Atom/study_ml/src/Ch03/classTree.t')) 

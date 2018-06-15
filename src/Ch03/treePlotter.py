@@ -65,22 +65,48 @@ def plotMidText(cntrPt,parentPt,txtString):
 	"""在父子节点之间填充文本信息 """
 	xMid = (parentPt[0]-cntrPt[0])/2.0 + cntrPt[0]
 	yMid = (parentPt[1]-cntrPt[1])/2.0 + cntrPt[1]
-	createPlot.axl.text(xMid,ymid,txtString)
+	createPlot.axl.text(xMid,yMid,txtString)
 
 def plotTree(myTree,parentPt,nodeTxt):
-	#计算宽与高
-	numLeafs = getNumLeafs(myTree)
+	numLeafs = getNumLeafs(myTree)  			#计算宽与高
 	depth = getTreeDepth(myTree)
-	firstStr = myTree.keys()[0]
+	firstStr = list(myTree.keys())[0]
 	cntrPt = (plotTree.xOff + (1.0+float(numLeafs))/2.0/plotTree.totalW,plotTree.yOff )
 	plotMidText(cntrPt,parentPt,nodeTxt)
+	plotNode(firstStr,cntrPt,parentPt,decisionNode)
+	secondDict = myTree[firstStr]
+	plotTree.yOff = plotTree.yOff - 1.0/plotTree.totalD
+	for key in secondDict.keys():
+		if type(secondDict[key]).__name__ == 'dict':
+			plotTree(secondDict[key],cntrPt,str(key))
+		else:
+			plotTree.xOff = plotTree.xOff + 1.0/plotTree.totalW
+			plotNode(secondDict[key],(plotTree.xOff,plotTree.yOff),cntrPt,leafNode)
+			plotMidText((plotTree.xOff,plotTree.yOff),cntrPt,str(key))
+	plotTree.yOff = plotTree.yOff + 1.0/plotTree.totalD
+
+def createplot(inTree):
+	fig = plt.figure(1,facecolor='white')
+	fig.clf()
+	axprops = dict(xticks=[],yticks=[])
+	createPlot.axl = plt.subplot(111,frameon=False,**axprops)
+	plotTree.totalW = float(getNumLeafs(inTree))
+	plotTree.totalD = float(getTreeDepth(inTree))
+	plotTree.xOff = -0.5/plotTree.totalW;   plotTree.yOff = 1.0;
+	plotTree(inTree,(0.5,1.0),'')
+	plt.show()
+
 
 
 
 if __name__ == '__main__':
+	print (plt.style.available)		#获取所有的自带样式 
+	plt.style.use("seaborn-ticks") 			#使用自带的样式进行美化 
 	#createPlot();
 	#print (getNumLeafs({'filppers': {0: 'no', 1: 'yes'}}))
-	myTree = retrieveTree(1)
-	print ("myTree\n",myTree) 
-	print("getNumLeafs(myTree)\n",getNumLeafs(myTree))
-	print("getTreeDepth(myTree)\n",getTreeDepth(myTree))
+	myTree = retrieveTree(0)
+	# print ("myTree\n",myTree) 
+	# print("getNumLeafs(myTree)\n",getNumLeafs(myTree))
+	# print("getTreeDepth(myTree)\n",getTreeDepth(myTree))
+	# createplot(myTree)
+	
